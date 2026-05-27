@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+*.local
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+
+# VS Code local history (extension artefacts)
+.history/
+
+# Backend API server (separate project, not part of SPA)
+async-race-api/
+
+# Task specification and mockups (not part of deployable project)
+instructions.md
+mockup/
+
+# Claude AI working files
+CLAUDE_PROMPT.md
+IMPLEMENTATION.md
+WORK_PLAN.md
