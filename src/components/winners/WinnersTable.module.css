@@ -1,0 +1,47 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.th {
+  text-align: left;
+  padding: 10px 16px;
+  color: var(--text-muted);
+  font-size: 12px;
+  letter-spacing: 1px;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s;
+}
+
+.sortable:hover {
+  color: var(--neon-blue);
+}
+
+.sortable.active {
+  color: var(--neon-pink);
+}
+
+.row:hover {
+  background: var(--bg-secondary);
+}
+
+.td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.message {
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 32px 0;
+  text-align: center;
+  letter-spacing: 1px;
+}

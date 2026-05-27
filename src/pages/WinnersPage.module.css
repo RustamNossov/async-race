@@ -1,0 +1,19 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: var(--neon-blue);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+}
