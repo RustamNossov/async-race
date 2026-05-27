@@ -1,0 +1,104 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.controls {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  border: none;
+  transition:
+    opacity 0.15s,
+    filter 0.15s;
+}
+
+.btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.start {
+  background: var(--neon-green);
+  color: var(--bg);
+}
+
+.stop {
+  background: var(--neon-pink);
+  color: #fff;
+}
+
+.select {
+  background: var(--neon-orange);
+  color: var(--bg);
+}
+
+.delete {
+  background: #c0392b;
+  color: #fff;
+}
+
+.track {
+  flex: 1;
+  position: relative;
+  height: 40px;
+  background: repeating-linear-gradient(
+    90deg,
+    #1a2a1a 0px,
+    #1a2a1a 20px,
+    #0d1b0d 20px,
+    #0d1b0d 40px
+  );
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.car {
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  filter: drop-shadow(0 0 4px currentColor);
+}
+
+.car.broken {
+  filter: grayscale(1) opacity(0.5);
+}
+
+.name {
+  position: absolute;
+  left: 80px;
+  color: var(--text);
+  font-size: 12px;
+  letter-spacing: 1px;
+  z-index: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 30%;
+}
+
+.finish {
+  position: absolute;
+  right: 4px;
+  font-size: 11px;
+  color: var(--neon-orange);
+  letter-spacing: 2px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  opacity: 0.7;
+}

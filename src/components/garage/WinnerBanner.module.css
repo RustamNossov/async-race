@@ -1,0 +1,54 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.banner {
+  background: var(--bg-card);
+  border: 2px solid var(--neon-pink);
+  border-radius: var(--radius);
+  padding: 28px 48px;
+  text-align: center;
+  box-shadow:
+    0 0 40px rgba(247, 37, 133, 0.4),
+    0 0 80px rgba(247, 37, 133, 0.15);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.label {
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: var(--neon-green);
+  margin: 0 0 6px;
+}
+
+.name {
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--neon-green);
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+
+.time {
+  font-size: 16px;
+  letter-spacing: 2px;
+  color: var(--neon-green);
+  margin: 0;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
