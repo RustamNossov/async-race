@@ -4,24 +4,47 @@
   gap: 10px;
   padding: 6px 0;
   border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.rowSelected {
+  background: rgba(76, 201, 240, 0.07);
+  border-bottom-color: var(--neon-blue);
 }
 
 .controls {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 4px;
   flex-shrink: 0;
 }
 
 .btn {
-  width: 26px;
   height: 26px;
+  padding: 0 8px;
   border-radius: 3px;
   font-size: 11px;
   font-weight: bold;
   border: none;
+  white-space: nowrap;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition:
     opacity 0.15s,
-    filter 0.15s;
+    filter 0.15s,
+    transform 0.1s;
+}
+
+.btn:not(:disabled):hover {
+  filter: brightness(1.25);
+  transform: scale(1.07);
+}
+
+.btn:not(:disabled):active {
+  transform: scale(0.95);
+  filter: brightness(0.9);
 }
 
 .btn:disabled {
@@ -32,16 +55,26 @@
 .start {
   background: var(--neon-green);
   color: var(--bg);
+  width: 26px;
+  padding: 0;
 }
 
 .stop {
   background: var(--neon-pink);
   color: #fff;
+  width: 26px;
+  padding: 0;
 }
 
 .select {
   background: var(--neon-orange);
   color: var(--bg);
+}
+
+.selectActive {
+  outline: 2px solid #fff;
+  outline-offset: 1px;
+  filter: brightness(1.3);
 }
 
 .delete {
@@ -69,8 +102,6 @@
 .car {
   position: absolute;
   left: 4px;
-  top: 50%;
-  transform: translateY(-50%);
   z-index: 1;
   filter: drop-shadow(0 0 4px currentColor);
 }
@@ -92,13 +123,30 @@
   max-width: 30%;
 }
 
-.finish {
+.finishZone {
   position: absolute;
-  right: 4px;
-  font-size: 11px;
+  right: 0;
+  top: 0;
+  width: 72px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.06) 0px,
+    rgba(255, 255, 255, 0.06) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+  border-left: 2px solid var(--neon-orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.finishLabel {
   color: var(--neon-orange);
-  letter-spacing: 2px;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  opacity: 0.7;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  text-shadow: 0 0 6px var(--neon-orange);
 }

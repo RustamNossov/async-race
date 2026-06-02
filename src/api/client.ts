@@ -30,6 +30,13 @@ export async function getCar(id: number): Promise<Car> {
   return res.json() as Promise<Car>;
 }
 
+export async function carNameExists(name: string): Promise<boolean> {
+  const res = await fetch(`${API_BASE}/garage?name=${encodeURIComponent(name)}`);
+  await handleErrors(res);
+  const data = (await res.json()) as Car[];
+  return data.length > 0;
+}
+
 export async function createCar(name: string, color: string): Promise<Car> {
   const res = await fetch(`${API_BASE}/garage`, {
     method: 'POST',

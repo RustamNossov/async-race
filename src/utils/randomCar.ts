@@ -18,4 +18,24 @@ function generateRandomCar(): { name: string; color: string } {
   };
 }
 
+export function generateUniqueRandomCars(
+  existingNames: Set<string>,
+  count: number,
+): { name: string; color: string }[] {
+  const pool: { name: string; color: string }[] = [];
+  for (const first of CAR_NAMES_FIRST) {
+    for (const second of CAR_NAMES_SECOND) {
+      const name = `${first} ${second}`;
+      if (!existingNames.has(name)) {
+        pool.push({ name, color: randomHexColor() });
+      }
+    }
+  }
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool.slice(0, count);
+}
+
 export default generateRandomCar;

@@ -22,14 +22,14 @@ function WinnersTable() {
     <table className={styles.table}>
       <thead>
         <tr>
-          <th className={styles.th}>№</th>
-          <th className={styles.th}>CAR</th>
+          <th className={styles.th}>CAR NUMBER</th>
+          <th className={styles.th}>CAR ICON</th>
           <th className={styles.th}>NAME</th>
           <th
             className={`${styles.th} ${styles.sortable} ${sortBy === 'wins' ? styles.active : ''}`}
             onClick={() => handleSort('wins')}
           >
-            WINS{sortIcon(sortBy === 'wins', sortOrder)}
+            NUMBER OF WINS{sortIcon(sortBy === 'wins', sortOrder)}
           </th>
           <th
             className={`${styles.th} ${styles.sortable} ${sortBy === 'time' ? styles.active : ''}`}

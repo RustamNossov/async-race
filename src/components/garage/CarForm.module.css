@@ -67,3 +67,21 @@
   opacity: 0.35;
   cursor: not-allowed;
 }
+
+.inputWrap {
+  position: relative;
+}
+
+.inputError {
+  border-color: #ff4444;
+}
+
+.error {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  font-size: 11px;
+  color: #ff4444;
+  white-space: nowrap;
+  margin-top: 2px;
+}

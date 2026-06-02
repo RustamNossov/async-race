@@ -1,9 +1,11 @@
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setEditCar, removeCar, fetchCars } from '../../store/garageSlice';
+import { setEditCar, clearEdit, removeCar, fetchCars, setCurrentPage } from '../../store/garageSlice';
 import useCarAnimation from '../../hooks/useCarAnimation';
 import { Car } from '../../api/types';
 import { CARS_PER_PAGE } from '../../utils/constants';
 import CarIcon from './CarIcon';
+import PlayIcon from '../common/PlayIcon';
+import ResetIcon from '../common/ResetIcon';
 import styles from './CarItem.module.css';
 
 interface Props {
@@ -14,6 +16,8 @@ function CarItem({ car }: Props) {
   const dispatch = useAppDispatch();
   const currentPage = useAppSelector((s) => s.garage.currentPage);
   const totalCount = useAppSelector((s) => s.garage.totalCount);
+  const editId = useAppSelector((s) => s.garage.editId);
+  const isSelected = editId === car.id;
   const { trackRef, carRef, status, isRacing, handleStart, handleStop } = useCarAnimation(
     car.id,
     car.name,
@@ -23,45 +27,54 @@ function CarItem({ car }: Props) {
   const isIdle = status === 'idle';
 
   const handleSelect = () => {
-    dispatch(setEditCar({ id: car.id, name: car.name, color: car.color }));
+    if (isSelected) {
+      dispatch(clearEdit());
+    } else {
+      dispatch(setEditCar({ id: car.id, name: car.name, color: car.color }));
+    }
   };
 
   const handleDelete = async () => {
+    dispatch(clearEdit());
     await dispatch(removeCar(car.id));
     const lastPage = Math.max(1, Math.ceil((totalCount - 1) / CARS_PER_PAGE));
     const nextPage = Math.min(currentPage, lastPage);
-    dispatch(fetchCars(nextPage));
+    if (nextPage !== currentPage) {
+      dispatch(setCurrentPage(nextPage));
+    } else {
+      dispatch(fetchCars(currentPage));
+    }
   };
 
   return (
-    <div className={styles.row}>
+    <div className={`${styles.row} ${isSelected ? styles.rowSelected : ''}`}>
       <div className={styles.controls}>
         <button
           className={`${styles.btn} ${styles.start}`}
-          onClick={handleStart}
+          onClick={() => { dispatch(clearEdit()); handleStart(); }}
           disabled={!isIdle || isRacing}
           type="button"
-          title="Start"
+          title="Race the car"
         >
-          A
+          <PlayIcon size={15} />
         </button>
         <button
-          className={`${styles.btn} ${styles.stop}`}
-          onClick={handleStop}
-          disabled={isIdle || isRacing}
-          type="button"
-          title="Stop"
-        >
-          B
-        </button>
-        <button
-          className={`${styles.btn} ${styles.select}`}
+          className={`${styles.btn} ${styles.select} ${isSelected ? styles.selectActive : ''}`}
           onClick={handleSelect}
           disabled={isDriving}
           type="button"
           title="Select"
         >
-          S
+          Select
+        </button>
+        <button
+          className={`${styles.btn} ${styles.stop}`}
+          onClick={() => { dispatch(clearEdit()); handleStop(); }}
+          disabled={isIdle || isRacing}
+          type="button"
+          title="Reset"
+        >
+          <ResetIcon size={15} />
         </button>
         <button
           className={`${styles.btn} ${styles.delete}`}
@@ -70,7 +83,7 @@ function CarItem({ car }: Props) {
           type="button"
           title="Delete"
         >
-          D
+          Remove
         </button>
       </div>
 
@@ -79,7 +92,9 @@ function CarItem({ car }: Props) {
           <CarIcon color={car.color} />
         </div>
         <span className={styles.name}>{car.name}</span>
-        <span className={styles.finish}>FINISH</span>
+        <div className={styles.finishZone}>
+          <span className={styles.finishLabel}>FINISH</span>
+        </div>
       </div>
     </div>
   );

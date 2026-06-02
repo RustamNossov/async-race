@@ -47,10 +47,3 @@
     0 0 10px var(--neon-pink),
     0 0 30px var(--neon-purple);
 }
-
-.chevrons {
-  color: var(--neon-orange);
-  font-size: 18px;
-  letter-spacing: 4px;
-  opacity: 0.7;
-}

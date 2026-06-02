@@ -36,6 +36,20 @@ export const removeCar = createAsyncThunk('garage/removeCar', async (id: number)
   return id;
 });
 
+export const deleteAllCars = createAsyncThunk('garage/deleteAllCars', async () => {
+  const { data } = await getCarsApi(1, 9999);
+  await Promise.all(
+    data.map(async ({ id }) => {
+      await deleteCarApi(id);
+      try {
+        await deleteWinnerApi(id);
+      } catch {
+        // 404 expected when car was never a winner
+      }
+    }),
+  );
+});
+
 // --- Slice ---
 
 interface GarageState {

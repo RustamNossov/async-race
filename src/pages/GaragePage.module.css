@@ -25,6 +25,30 @@
 
 .footer {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
   padding-top: 8px;
+}
+
+.deleteAll {
+  background: transparent;
+  border: 1px solid #c0392b;
+  color: #c0392b;
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.deleteAll:hover:not(:disabled) {
+  background: #c0392b;
+  color: #fff;
+}
+
+.deleteAll:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }

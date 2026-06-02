@@ -5,25 +5,26 @@ interface Props {
   totalCount: number;
   perPage: number;
   onPageChange: (page: number) => void;
+  disabled?: boolean;
 }
 
-function Pagination({ currentPage, totalCount, perPage, onPageChange }: Props) {
+function Pagination({ currentPage, totalCount, perPage, onPageChange, disabled = false }: Props) {
   const totalPages = Math.ceil(totalCount / perPage);
 
   return (
     <div className={styles.pagination}>
       <button
         className={styles.btn}
-        disabled={currentPage <= 1}
+        disabled={disabled || currentPage <= 1}
         onClick={() => onPageChange(currentPage - 1)}
         type="button"
       >
         {'<'}
       </button>
-      <span className={styles.label}>PAGE #{currentPage}</span>
+      <span className={styles.label}>PAGE {currentPage} of {totalPages}</span>
       <button
         className={styles.btn}
-        disabled={currentPage >= totalPages}
+        disabled={disabled || currentPage >= totalPages}
         onClick={() => onPageChange(currentPage + 1)}
         type="button"
       >

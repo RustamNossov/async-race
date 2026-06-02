@@ -23,9 +23,6 @@ function Header() {
         <span className={styles.logoText}>ASYNC RACE</span>
       </div>
 
-      <div className={styles.chevrons} aria-hidden="true">
-        {'>>>>>>>>>>'}
-      </div>
     </header>
   );
 }

@@ -9,9 +9,12 @@ function buildAnimation(
   carEl: HTMLDivElement,
   duration: number,
 ): Animation {
-  const targetX = trackEl.clientWidth - carEl.clientWidth;
+  const targetX = trackEl.clientWidth - carEl.clientWidth - 10 - carEl.offsetLeft;
   return carEl.animate(
-    [{ transform: 'translateX(0px)' }, { transform: `translateX(${targetX}px)` }],
+    [
+      { transform: 'translateX(0px)' },
+      { transform: `translateX(${targetX}px)` },
+    ],
     { duration, fill: 'forwards', easing: 'linear' },
   );
 }
@@ -29,58 +32,79 @@ export default function useCarAnimation(carId: number, carName: string) {
   const dispatch = useAppDispatch();
   const carData = useAppSelector((s) => s.race.cars[carId]);
   const status: CarStatus = carData?.status ?? 'idle';
+  const duration = carData?.duration ?? 0;
   const isRacing = useAppSelector((s) => s.race.isRacing);
-  const startSignal = useAppSelector((s) => s.race.startSignal);
+  const resetSignal = useAppSelector((s) => s.race.resetSignal);
 
   const trackRef = useRef<HTMLDivElement>(null);
   const carRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<Animation | null>(null);
   const stoppedRef = useRef(false);
+  const wasAnimatedRef = useRef(false); // true if animation ran in this component instance
 
-  // Mutable ref so handlers always read the latest status without being recreated
   const statusRef = useRef<CarStatus>(status);
   statusRef.current = status;
 
   const resetPosition = useCallback(() => {
-    if (carRef.current) carRef.current.style.transform = 'translateX(0)';
+    if (carRef.current) carRef.current.style.transform = '';
   }, []);
 
+  // Start animation when car transitions to 'driving'
+  useEffect(() => {
+    if (status !== 'driving' || !duration || !trackRef.current || !carRef.current) return;
+    if (animRef.current) animRef.current.cancel();
+    wasAnimatedRef.current = true;
+    animRef.current = buildAnimation(trackRef.current, carRef.current, duration);
+  }, [status, duration]);
+
+  // Freeze car position when engine breaks (for cars that were animated)
+  useEffect(() => {
+    if (status !== 'broken') return;
+    if (animRef.current) {
+      commitAndCancel(animRef.current);
+      animRef.current = null;
+    }
+  }, [status]);
+
+  // Position car when mounting after race (was not animated — was on a different page)
+  const progress = carData?.progress ?? 0;
+  useEffect(() => {
+    if (status !== 'finished' && status !== 'broken') return;
+    if (wasAnimatedRef.current) return;
+    if (!trackRef.current || !carRef.current) return;
+    const targetX = trackRef.current.clientWidth - carRef.current.clientWidth - 10 - carRef.current.offsetLeft;
+    carRef.current.style.transform = `translateX(${Math.round(progress * targetX)}px)`;
+  }, [status, progress]);
+
+  // Individual car start (A button)
   const handleStart = useCallback(async () => {
     if (statusRef.current !== 'idle') return;
     stoppedRef.current = false;
     dispatch(setCarStatus({ id: carId, status: 'started' }));
 
     let velocity: number;
-    let distance: number;
+    let carDistance: number;
     try {
-      ({ velocity, distance } = await startEngine(carId));
+      ({ velocity, distance: carDistance } = await startEngine(carId));
     } catch {
       dispatch(setCarStatus({ id: carId, status: 'idle' }));
       return;
     }
 
     if (stoppedRef.current) return;
-    const duration = Math.round((distance / velocity) * 1000);
-    dispatch(setCarStatus({ id: carId, status: 'driving', duration }));
-
-    if (trackRef.current && carRef.current) {
-      animRef.current = buildAnimation(trackRef.current, carRef.current, duration);
-    }
+    const carDuration = Math.round(carDistance / velocity);
+    dispatch(setCarStatus({ id: carId, status: 'driving', duration: carDuration }));
 
     try {
       await drive(carId);
       if (stoppedRef.current) return;
       dispatch(setCarStatus({ id: carId, status: 'finished' }));
-      const time = Math.round(duration / 10) / 100;
+      const time = Math.round(carDuration / 10) / 100;
       const winner: RaceWinner = { id: carId, name: carName, time };
       dispatch(setWinner(winner));
     } catch (err) {
       if (stoppedRef.current) return;
       if (err instanceof ApiError && err.status === 500) {
-        if (animRef.current) {
-          commitAndCancel(animRef.current);
-          animRef.current = null;
-        }
         dispatch(setCarStatus({ id: carId, status: 'broken' }));
       }
     }
@@ -98,19 +122,11 @@ export default function useCarAnimation(carId: number, carName: string) {
     dispatch(setCarStatus({ id: carId, status: 'idle' }));
   }, [carId, dispatch, resetPosition]);
 
-  // Auto-start this car when RACE button fires a new startSignal
-  const processedSignalRef = useRef(0);
+  // Cancel animation and reset position when race is reset
+  const processedResetRef = useRef(0);
   useEffect(() => {
-    if (startSignal > processedSignalRef.current) {
-      processedSignalRef.current = startSignal;
-      void handleStart();
-    }
-  }, [startSignal, handleStart]);
-
-  // Cancel animation and reset position when Redux state is externally reset to idle
-  const prevStatusRef = useRef<CarStatus>('idle');
-  useEffect(() => {
-    if (status === 'idle' && prevStatusRef.current !== 'idle') {
+    if (resetSignal > processedResetRef.current) {
+      processedResetRef.current = resetSignal;
       stoppedRef.current = true;
       if (animRef.current) {
         animRef.current.cancel();
@@ -118,8 +134,7 @@ export default function useCarAnimation(carId: number, carName: string) {
       }
       resetPosition();
     }
-    prevStatusRef.current = status;
-  }, [status, resetPosition]);
+  }, [resetSignal, resetPosition]);
 
   return { trackRef, carRef, status, isRacing, handleStart, handleStop };
 }
