@@ -56,6 +56,7 @@ interface GarageState {
   cars: Car[];
   totalCount: number;
   currentPage: number;
+  loadedPage: number | null;
   loading: boolean;
   createName: string;
   createColor: string;
@@ -68,6 +69,7 @@ const initialState: GarageState = {
   cars: [],
   totalCount: 0,
   currentPage: 1,
+  loadedPage: null,
   loading: false,
   createName: '',
   createColor: '#000000',
@@ -115,6 +117,7 @@ const garageSlice = createSlice({
         state.loading = false;
         state.cars = action.payload.data;
         state.totalCount = action.payload.totalCount ?? 0;
+        state.loadedPage = state.currentPage;
       })
       .addCase(fetchCars.rejected, (state) => {
         state.loading = false;

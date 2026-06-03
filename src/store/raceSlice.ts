@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   getWinner, createWinner, updateWinner,
   stopEngine,
-  getCars as getCarsApi,
   startEngine as startEngineApi,
   drive as driveApi,
 } from '../api/client';
@@ -25,7 +24,6 @@ export interface RaceWinner {
 
 interface RaceState {
   isRacing: boolean;
-  startSignal: number;
   resetSignal: number;
   allCarsSettled: boolean; // all cars finished or broken — unlocks pagination
   winner: RaceWinner | null;
@@ -34,7 +32,7 @@ interface RaceState {
 
 const initialState: RaceState = {
   isRacing: false,
-  startSignal: 0,
+
   resetSignal: 0,
   allCarsSettled: false,
   winner: null,
@@ -61,7 +59,6 @@ const raceSlice = createSlice({
     startRace(state) {
       state.isRacing = true;
       state.allCarsSettled = false;
-      state.startSignal += 1;
     },
     setAllCarsSettled(state) {
       state.allCarsSettled = true;
@@ -94,7 +91,8 @@ export const raceAllCars = createAsyncThunk(
   'race/raceAllCars',
   async (_, { dispatch, getState }) => {
     dispatch(startRace());
-    const { data: cars } = await getCarsApi(1, 9999);
+    const state = getState() as { race: RaceState; garage: { cars: Car[] } };
+    const cars = state.garage.cars;
 
     const isStillRacing = () => (getState() as { race: RaceState }).race.isRacing;
 

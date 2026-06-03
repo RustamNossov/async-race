@@ -1,7 +1,6 @@
 export const CARS_PER_PAGE = 7;
 export const WINNERS_PER_PAGE = 10;
 export const RANDOM_CARS_COUNT = 100;
-export const MAX_CARS = 100;
 export const CAR_NAME_MAX_LENGTH = 50;
 export const API_BASE = 'http://127.0.0.1:3000';
 
@@ -16,6 +15,16 @@ export const CAR_NAMES_FIRST = [
   'Volkswagen',
   'Porsche',
   'Ferrari',
+  'Lamborghini',
+  'Chevrolet',
+  'Nissan',
+  'Hyundai',
+  'Kia',
+  'Mazda',
+  'Subaru',
+  'Lexus',
+  'Jaguar',
+  'Bentley',
 ];
 
 export const CAR_NAMES_SECOND = [
@@ -29,4 +38,24 @@ export const CAR_NAMES_SECOND = [
   'Golf',
   '911',
   'F40',
+  'Aventador',
+  'Silverado',
+  'GT-R',
+  'Elantra',
+  'Stinger',
+  'MX-5',
+  'Outback',
+  'RX 450h',
+  'F-Pace',
+  'Continental',
+  'Model 3',
+  'M3',
+  'E-Class',
+  'Explorer',
+  'Corolla',
+  'Accord',
+  'Q7',
+  'Passat',
+  'Taycan',
+  'SF90',
 ];

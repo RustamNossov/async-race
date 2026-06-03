@@ -1,6 +1,5 @@
 import PlayIcon from '../common/PlayIcon';
 import ResetIcon from '../common/ResetIcon';
-import { MAX_CARS } from '../../utils/constants';
 import styles from './RaceControls.module.css';
 
 interface Props {
@@ -34,10 +33,10 @@ function RaceControls({ onRaceStart, onRaceReset, onGenerate, isRacing, loading,
       <button
         className={`${styles.btn} ${styles.generate}`}
         onClick={onGenerate}
-        disabled={isRacing || loading || totalCount >= MAX_CARS}
+        disabled={isRacing || loading}
         type="button"
       >
-        GENERATE CARS {totalCount >= MAX_CARS ? `(${MAX_CARS} max)` : ''}
+        GENERATE CARS
       </button>
     </div>
   );

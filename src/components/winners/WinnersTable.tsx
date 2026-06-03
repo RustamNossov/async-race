@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSort, SortField } from '../../store/winnersSlice';
-import { WINNERS_PER_PAGE } from '../../utils/constants';
+
 import CarIcon from '../garage/CarIcon';
 import styles from './WinnersTable.module.css';
 
@@ -11,7 +11,7 @@ function sortIcon(active: boolean, order: 'ASC' | 'DESC') {
 
 function WinnersTable() {
   const dispatch = useAppDispatch();
-  const { winners, loading, sortBy, sortOrder, currentPage } = useAppSelector((s) => s.winners);
+  const { winners, loading, sortBy, sortOrder } = useAppSelector((s) => s.winners);
 
   const handleSort = (field: SortField) => dispatch(setSort(field));
 
@@ -22,9 +22,19 @@ function WinnersTable() {
     <table className={styles.table}>
       <thead>
         <tr>
-          <th className={styles.th}>CAR NUMBER</th>
+          <th
+            className={`${styles.th} ${styles.sortable} ${sortBy === 'id' ? styles.active : ''}`}
+            onClick={() => handleSort('id')}
+          >
+            CAR NUMBER{sortIcon(sortBy === 'id', sortOrder)}
+          </th>
           <th className={styles.th}>CAR ICON</th>
-          <th className={styles.th}>NAME</th>
+          <th
+            className={`${styles.th} ${styles.sortable} ${sortBy === 'name' ? styles.active : ''}`}
+            onClick={() => handleSort('name')}
+          >
+            NAME{sortIcon(sortBy === 'name', sortOrder)}
+          </th>
           <th
             className={`${styles.th} ${styles.sortable} ${sortBy === 'wins' ? styles.active : ''}`}
             onClick={() => handleSort('wins')}
@@ -40,9 +50,9 @@ function WinnersTable() {
         </tr>
       </thead>
       <tbody>
-        {winners.map((winner, index) => (
+        {winners.map((winner) => (
           <tr key={winner.id} className={styles.row}>
-            <td className={styles.td}>{(currentPage - 1) * WINNERS_PER_PAGE + index + 1}</td>
+            <td className={styles.td}>{winner.id}</td>
             <td className={styles.td}>
               <CarIcon color={winner.color} />
             </td>

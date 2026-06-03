@@ -120,7 +120,13 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  opacity: 1;
+  transition: opacity 0.3s ease;
   max-width: 30%;
+}
+
+.nameHidden {
+  opacity: 0;
 }
 
 .finishZone {

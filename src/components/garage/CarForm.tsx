@@ -1,7 +1,6 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { CAR_NAME_MAX_LENGTH, MAX_CARS } from '../../utils/constants';
-import { carNameExists } from '../../api/client';
+import { CAR_NAME_MAX_LENGTH } from '../../utils/constants';
 import {
   setCreateName,
   setCreateColor,
@@ -16,18 +15,12 @@ import styles from './CarForm.module.css';
 
 function CarForm() {
   const dispatch = useAppDispatch();
-  const { createName, createColor, editId, editName, editColor, currentPage, totalCount } =
+  const { createName, createColor, editId, editName, editColor, currentPage } =
     useAppSelector((s) => s.garage);
-  const [nameError, setNameError] = useState('');
 
   const handleCreate = async (e: FormEvent) => {
     e.preventDefault();
     if (!createName.trim()) return;
-    if (await carNameExists(createName.trim())) {
-      setNameError('A car with this name already exists');
-      return;
-    }
-    setNameError('');
     await dispatch(addCar({ name: createName.trim(), color: createColor }));
     dispatch(setCreateName(''));
     dispatch(setCreateColor('#000000'));
@@ -45,23 +38,20 @@ function CarForm() {
   return (
     <div className={styles.forms}>
       <form className={styles.form} onSubmit={handleCreate}>
-        <div className={styles.inputWrap}>
-          <input
-            className={`${styles.input}${nameError ? ` ${styles.inputError}` : ''}`}
-            value={createName}
-            onChange={(e) => { dispatch(setCreateName(e.target.value)); setNameError(''); }}
-            placeholder="Car name"
-            maxLength={CAR_NAME_MAX_LENGTH}
-          />
-          {nameError && <span className={styles.error}>{nameError}</span>}
-        </div>
+        <input
+          className={styles.input}
+          value={createName}
+          onChange={(e) => dispatch(setCreateName(e.target.value))}
+          placeholder="Car name"
+          maxLength={CAR_NAME_MAX_LENGTH}
+        />
         <input
           type="color"
           className={styles.colorPicker}
           value={createColor}
           onChange={(e) => dispatch(setCreateColor(e.target.value))}
         />
-        <button className={styles.btn} type="submit" disabled={!createName.trim() || totalCount >= MAX_CARS}>
+        <button className={styles.btn} type="submit" disabled={!createName.trim()}>
           CREATE
         </button>
       </form>

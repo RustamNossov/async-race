@@ -2,8 +2,10 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { getWinners as getWinnersApi, getCar } from '../api/client';
 import { WINNERS_PER_PAGE } from '../utils/constants';
 
-export type SortField = 'wins' | 'time';
+export type SortField = 'id' | 'wins' | 'time' | 'name';
 export type SortOrder = 'ASC' | 'DESC';
+
+const SERVER_SORT_FIELDS = new Set<SortField>(['id', 'wins', 'time']);
 
 export interface WinnerWithCar {
   id: number;
@@ -33,10 +35,17 @@ async function enrichWinner(id: number, wins: number, time: number): Promise<Win
 export const fetchWinners = createAsyncThunk(
   'winners/fetchWinners',
   async ({ page, sortBy, sortOrder }: FetchWinnersArgs) => {
-    const result = await getWinnersApi(page, WINNERS_PER_PAGE, sortBy, sortOrder);
-    const data = await Promise.all(
+    const serverSort = SERVER_SORT_FIELDS.has(sortBy) ? (sortBy as 'id' | 'wins' | 'time') : undefined;
+    const result = await getWinnersApi(page, WINNERS_PER_PAGE, serverSort, serverSort ? sortOrder : undefined);
+    let data = await Promise.all(
       result.data.map(({ id, wins, time }) => enrichWinner(id, wins, time)),
     );
+    if (sortBy === 'name') {
+      data = data.slice().sort((a, b) => {
+        const cmp = a.name.localeCompare(b.name);
+        return sortOrder === 'ASC' ? cmp : -cmp;
+      });
+    }
     return { data, totalCount: result.totalCount };
   },
 );

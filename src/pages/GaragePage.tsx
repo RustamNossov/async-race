@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchCars, addCar, setCurrentPage, clearEdit, deleteAllCars } from '../store/garageSlice';
 import { resetRace, raceAllCars, saveWinner, stopAllEngines, RaceWinner } from '../store/raceSlice';
-import { generateUniqueRandomCars } from '../utils/randomCar';
-import { getCars as getCarsApi } from '../api/client';
-import { CARS_PER_PAGE, RANDOM_CARS_COUNT, MAX_CARS } from '../utils/constants';
+import generateRandomCar from '../utils/randomCar';
+import { CARS_PER_PAGE, RANDOM_CARS_COUNT } from '../utils/constants';
 import CarForm from '../components/garage/CarForm';
 import RaceControls from '../components/garage/RaceControls';
 import CarList from '../components/garage/CarList';
@@ -15,7 +14,7 @@ import styles from './GaragePage.module.css';
 
 function GaragePage() {
   const dispatch = useAppDispatch();
-  const { currentPage, totalCount, loading } = useAppSelector((s) => s.garage);
+  const { currentPage, loadedPage, totalCount, loading } = useAppSelector((s) => s.garage);
   const isRacing = useAppSelector((s) => s.race.isRacing);
   const allCarsSettled = useAppSelector((s) => s.race.allCarsSettled);
   const runningCarIds = useAppSelector((s) =>
@@ -24,8 +23,10 @@ function GaragePage() {
   const winner = useAppSelector((s) => s.race.winner);
 
   useEffect(() => {
-    dispatch(fetchCars(currentPage));
-  }, [dispatch, currentPage]);
+    if (loadedPage !== currentPage) {
+      dispatch(fetchCars(currentPage));
+    }
+  }, [dispatch, currentPage, loadedPage]);
 
   // Save the race winner to the winners API exactly once per race
   const prevWinnerRef = useRef<RaceWinner | null>(null);
@@ -41,10 +42,7 @@ function GaragePage() {
   };
 
   const handleGenerate = async () => {
-    const { data: existingCars } = await getCarsApi(1, 9999);
-    const existingNames = new Set(existingCars.map((c) => c.name));
-    const count = Math.min(RANDOM_CARS_COUNT, MAX_CARS - totalCount);
-    const cars = generateUniqueRandomCars(existingNames, count);
+    const cars = Array.from({ length: RANDOM_CARS_COUNT }, generateRandomCar);
     await Promise.all(cars.map(({ name, color }) => dispatch(addCar({ name, color }))));
     dispatch(fetchCars(currentPage));
   };
@@ -58,7 +56,6 @@ function GaragePage() {
     dispatch(clearEdit());
     dispatch(stopAllEngines(runningCarIds));
     dispatch(resetRace());
-    dispatch(fetchCars(currentPage));
   };
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);

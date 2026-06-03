@@ -91,7 +91,7 @@ function CarItem({ car }: Props) {
         <div className={`${styles.car} ${status === 'broken' ? styles.broken : ''}`} ref={carRef}>
           <CarIcon color={car.color} />
         </div>
-        <span className={styles.name}>{car.name}</span>
+        <span className={`${styles.name} ${isDriving ? styles.nameHidden : ''}`}>{car.name}</span>
         <div className={styles.finishZone}>
           <span className={styles.finishLabel}>FINISH</span>
         </div>

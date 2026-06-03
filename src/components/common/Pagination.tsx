@@ -11,6 +11,8 @@ interface Props {
 function Pagination({ currentPage, totalCount, perPage, onPageChange, disabled = false }: Props) {
   const totalPages = Math.ceil(totalCount / perPage);
 
+  if (totalPages <= 1) return null;
+
   return (
     <div className={styles.pagination}>
       <button
