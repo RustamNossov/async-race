@@ -18,6 +18,8 @@ function CarItem({ car }: Props) {
   const totalCount = useAppSelector((s) => s.garage.totalCount);
   const editId = useAppSelector((s) => s.garage.editId);
   const isSelected = editId === car.id;
+  const winner = useAppSelector((s) => s.race.winner);
+  const isWinner = useAppSelector((s) => s.race.isRacing) && winner?.id === car.id;
   const { trackRef, carRef, status, isRacing, handleStart, handleStop } = useCarAnimation(
     car.id,
     car.name,
@@ -47,7 +49,7 @@ function CarItem({ car }: Props) {
   };
 
   return (
-    <div className={`${styles.row} ${isSelected ? styles.rowSelected : ''}`}>
+    <div className={`${styles.row} ${isSelected ? styles.rowSelected : ''} ${isWinner ? styles.rowWinner : ''}`}>
       <div className={styles.controls}>
         <button
           className={`${styles.btn} ${styles.start}`}

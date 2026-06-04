@@ -12,6 +12,16 @@
   border-bottom-color: var(--neon-blue);
 }
 
+@keyframes winnerPulse {
+  0%, 100% { background: rgba(255, 215, 0, 0.05); }
+  50%       { background: rgba(255, 215, 0, 0.22); }
+}
+
+.rowWinner {
+  animation: winnerPulse 0.9s ease-in-out infinite;
+  border-bottom-color: gold;
+}
+
 .controls {
   display: grid;
   grid-template-columns: 1fr 1fr;
