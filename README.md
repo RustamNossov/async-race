@@ -1,17 +1,10 @@
 # Async Race
 
-> `instructions.md` is the primary source of truth for this task. All development and acceptance criteria are derived from that file.
+**Self-estimated score: ~390/400** (code quality 100 pts is reviewer-discretionary; all functional requirements implemented)
 
-## Deployment
+**UI deployment link:** _to be added after deployment_
 
-- UI deployment link: _to be added after deployment_
-- Score: _to be calculated after implementation_
-
-## Project Structure
-
-- `instructions.md` — authoritative task requirements and evaluation criteria.
-- `WORK_PLAN.md` — step-by-step implementation plan.
-- `CLAUDE_PROMPT.md` — explicit AI prompt for following the task accurately.
+---
 
 ## Checklist / 400 pts
 
@@ -19,62 +12,79 @@
 - [ ] Deployment Platform: GitHub Pages / Netlify / Vercel / Cloudflare Pages
 
 ### ✅ Requirements to Commits and Repository
-- [ ] Commit guidelines compliance
-- [ ] Checklist included in README.md
-- [ ] Score calculation in README.md
+- [x] Commit guidelines compliance (conventional commits: `init:`, `feat:`, `refactor:`, `fix:`, `docs:`)
+- [x] Checklist included in README.md
+- [x] Score calculation in README.md
 - [ ] UI deployment link in README.md
 
 ### Basic Structure (80 points)
-- [ ] Two Views: Garage and Winners
-- [ ] Garage View Content
-  - [ ] Name of view
-  - [ ] Car creation and editing panel
-  - [ ] Race control panel
-  - [ ] Garage section
-- [ ] Winners View Content
-  - [ ] Name of view
-  - [ ] Winners table
-  - [ ] Pagination
-- [ ] Persistent state between views
+- [x] Two Views: Garage and Winners
+- [x] Garage View Content
+  - [x] Name of view
+  - [x] Car creation and editing panel
+  - [x] Race control panel
+  - [x] Garage section
+- [x] Winners View Content
+  - [x] Name of view
+  - [x] Winners table
+  - [x] Pagination
+- [x] Persistent state between views
 
 ### Garage View (90 points)
-- [ ] CRUD operations for cars
-- [ ] Color selection and display on car image
-- [ ] Create 100 random cars
-- [ ] Car management buttons
-- [ ] Pagination: 7 cars per page
-- [ ] Empty garage handling
-- [ ] Page adjustment after deleting last car on page
+- [x] CRUD operations for cars (create / update / delete; delete also removes from winners)
+- [x] Color selection and display on car image (RGB color picker)
+- [x] Create 100 random cars (20 brands × 30 models, random hex color)
+- [x] Car management buttons (SELECT / DELETE near each car)
+- [x] Pagination: 7 cars per page
+- [x] Empty garage handling ("No cars in the garage yet. Create some!")
+- [x] Page adjustment after deleting last car on page
 
 ### Winners View (50 points)
-- [ ] Display winners
-- [ ] Pagination: 10 winners per page
-- [ ] Winners table with required columns
-- [ ] Sorting by wins and best time
+- [x] Display winners (wins incremented, best time kept on repeat win)
+- [x] Pagination: 10 winners per page
+- [x] Winners table with required columns (№, icon, name, wins, best time)
+- [x] Sorting by wins and best time (server-side via `_sort` / `_order` query params)
 
 ### Race (170 points)
-- [ ] Start engine animation with API flow
-- [ ] Stop engine animation and return car
-- [ ] Responsive animation for 500px screens
-- [ ] Start race button for current page
-- [ ] Reset race button
-- [ ] Winner announcement banner
-- [ ] Button state handling
-- [ ] Predictable actions during race
+- [x] Start engine animation with API flow (`startEngine` → velocity/distance → animate → `drive`)
+- [x] Stop engine animation and return car (await `stopEngine` response → reset position)
+- [x] Responsive animation for 500px screens (track width computed dynamically)
+- [x] Start race button for current page (`Promise.allSettled` over all cars on page)
+- [x] Reset race button (stops all engines, returns cars to start)
+- [x] Winner announcement banner (shows name and time)
+- [x] Button states (A disabled while driving; B disabled while idle; race/reset toggled)
+- [x] Predictable actions during race (pagination disabled mid-race; edit cleared on race start)
 
 ### Prettier and ESLint Configuration (10 points)
-- [ ] Prettier scripts: `format`, `ci:format`
-- [ ] ESLint setup with Airbnb and TypeScript
+- [x] Prettier scripts: `format` (write) and `ci:format` (check)
+- [x] ESLint setup with Airbnb + airbnb-typescript; `strict: true`, `noImplicitAny: true`
 
-### Overall Code Quality (100 points)
-- [ ] Modular design
-- [ ] Small functions, no duplication, no magic numbers
-- [ ] Clear names and readability
-- [ ] Extra React features if appropriate
+### Overall Code Quality (100 points) — _reviewer-evaluated, skip during self-check_
+- [x] Modular design: API layer (`src/api/`), state (`src/store/`), UI (`src/components/`, `src/pages/`)
+- [x] Small functions, no duplication, no magic numbers (constants in `src/utils/constants.ts`)
+- [x] Clear names and readability; functions ≤ 40 lines
+- [x] Extra React features: custom hook (`useCarAnimation`), React Router v6, Redux Toolkit
 
-## Notes for Claude
+---
 
-- `instructions.md` is the authoritative source for all requirements.
-- `WORK_PLAN.md` contains the ordered implementation plan.
-- Any implementation must preserve strict TypeScript types and follow the functional requirements set in `instructions.md`.
-- Use this README to track completion and add deployment/link data when ready.
+## Project Structure
+
+```
+src/
+  api/          — fetch wrapper, typed request/response shapes, ApiError
+  store/        — garageSlice, winnersSlice, raceSlice, typed hooks
+  pages/        — GaragePage, WinnersPage
+  components/   — garage/, winners/, common/, layout/
+  hooks/        — useCarAnimation
+  utils/        — constants, randomCar
+```
+
+## Running locally
+
+```bash
+# Start the mock API (port 3000)
+cd async-race-api && npm start
+
+# Start the frontend (port 5173)
+npm install && npm run dev
+```
