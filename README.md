@@ -2,20 +2,20 @@
 
 **Self-estimated score: ~390/400** (code quality 100 pts is reviewer-discretionary; all functional requirements implemented)
 
-**UI deployment link:** _to be added after deployment_
+**UI deployment link:** https://fanciful-pudding-5461c5.netlify.app/
 
 ---
 
 ## Checklist / 400 pts
 
 ### 🚀 UI Deployment
-- [ ] Deployment Platform: GitHub Pages / Netlify / Vercel / Cloudflare Pages
+- [x] Deployment Platform: Netlify — https://fanciful-pudding-5461c5.netlify.app/
 
 ### ✅ Requirements to Commits and Repository
 - [x] Commit guidelines compliance (conventional commits: `init:`, `feat:`, `refactor:`, `fix:`, `docs:`)
 - [x] Checklist included in README.md
 - [x] Score calculation in README.md
-- [ ] UI deployment link in README.md
+- [x] UI deployment link in README.md
 
 ### Basic Structure (80 points)
 - [x] Two Views: Garage and Winners
