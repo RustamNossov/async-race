@@ -88,9 +88,20 @@ export const {
 
 // --- Thunks ---
 
+let raceController: AbortController | null = null;
+
+function abortCurrentRace() {
+  raceController?.abort();
+  raceController = null;
+}
+
 export const raceAllCars = createAsyncThunk(
   'race/raceAllCars',
   async (_, { dispatch, getState }) => {
+    abortCurrentRace();
+    raceController = new AbortController();
+    const { signal } = raceController;
+
     dispatch(startRace());
     const state = getState() as { race: RaceState; garage: { cars: Car[] } };
     const cars = state.garage.cars;
@@ -105,7 +116,7 @@ export const raceAllCars = createAsyncThunk(
       cars.map(async (car: Car) => {
         let duration: number;
         try {
-          const { velocity, distance } = await startEngineApi(car.id);
+          const { velocity, distance } = await startEngineApi(car.id, signal);
           duration = Math.round(distance / velocity);
         } catch {
           return;
@@ -116,7 +127,7 @@ export const raceAllCars = createAsyncThunk(
 
         const driveStart = Date.now();
         try {
-          await driveApi(car.id);
+          await driveApi(car.id, signal);
           if (!isCurrentRace()) return;
           dispatch(setCarStatus({ id: car.id, status: 'finished', progress: 1 }));
           const time = Math.round(duration / 10) / 100;
@@ -159,6 +170,7 @@ export const saveWinner = createAsyncThunk(
 export const stopAllEngines = createAsyncThunk(
   'race/stopAllEngines',
   async (carIds: number[]) => {
+    abortCurrentRace();
     await Promise.allSettled(carIds.map((id) => stopEngine(id)));
   },
 );

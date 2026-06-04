@@ -64,8 +64,8 @@ export async function deleteCar(id: number): Promise<void> {
 
 // --- Engine ---
 
-export async function startEngine(id: number): Promise<EngineResponse> {
-  const res = await fetch(`${API_BASE}/engine?id=${id}&status=started`, { method: 'PATCH' });
+export async function startEngine(id: number, signal?: AbortSignal): Promise<EngineResponse> {
+  const res = await fetch(`${API_BASE}/engine?id=${id}&status=started`, { method: 'PATCH', signal });
   await handleErrors(res);
   return res.json() as Promise<EngineResponse>;
 }
@@ -76,8 +76,8 @@ export async function stopEngine(id: number): Promise<EngineResponse> {
   return res.json() as Promise<EngineResponse>;
 }
 
-export async function drive(id: number): Promise<DriveResponse> {
-  const res = await fetch(`${API_BASE}/engine?id=${id}&status=drive`, { method: 'PATCH' });
+export async function drive(id: number, signal?: AbortSignal): Promise<DriveResponse> {
+  const res = await fetch(`${API_BASE}/engine?id=${id}&status=drive`, { method: 'PATCH', signal });
   await handleErrors(res);
   return res.json() as Promise<DriveResponse>;
 }
