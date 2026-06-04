@@ -94,8 +94,12 @@ export const raceAllCars = createAsyncThunk(
     dispatch(startRace());
     const state = getState() as { race: RaceState; garage: { cars: Car[] } };
     const cars = state.garage.cars;
+    const capturedSignal = state.race.resetSignal;
 
-    const isStillRacing = () => (getState() as { race: RaceState }).race.isRacing;
+    const isCurrentRace = () => {
+      const s = (getState() as { race: RaceState }).race;
+      return s.isRacing && s.resetSignal === capturedSignal;
+    };
 
     await Promise.allSettled(
       cars.map(async (car: Car) => {
@@ -107,20 +111,20 @@ export const raceAllCars = createAsyncThunk(
           return;
         }
 
-        if (!isStillRacing()) return;
+        if (!isCurrentRace()) return;
         dispatch(setCarStatus({ id: car.id, status: 'driving', duration, progress: 0 }));
 
         const driveStart = Date.now();
         try {
           await driveApi(car.id);
-          if (!isStillRacing()) return;
+          if (!isCurrentRace()) return;
           dispatch(setCarStatus({ id: car.id, status: 'finished', progress: 1 }));
           const time = Math.round(duration / 10) / 100;
           dispatch(setWinner({ id: car.id, name: car.name, time }));
           const saved = (getState() as { race: RaceState }).race.winner?.id === car.id;
           if (saved) void dispatch(saveWinner({ id: car.id, time }));
         } catch (err) {
-          if (!isStillRacing()) return;
+          if (!isCurrentRace()) return;
           if (err instanceof ApiError && err.status === 500) {
             const elapsed = Date.now() - driveStart;
             const progress = Math.min(elapsed / duration, 0.95);
@@ -130,7 +134,7 @@ export const raceAllCars = createAsyncThunk(
       }),
     );
 
-    if (isStillRacing()) {
+    if (isCurrentRace()) {
       dispatch(setAllCarsSettled());
     }
   },
