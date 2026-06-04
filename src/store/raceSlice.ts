@@ -59,6 +59,7 @@ const raceSlice = createSlice({
     startRace(state) {
       state.isRacing = true;
       state.allCarsSettled = false;
+      state.winner = null;
     },
     setAllCarsSettled(state) {
       state.allCarsSettled = true;

@@ -117,8 +117,8 @@ export default function useCarAnimation(carId: number, carName: string) {
       animRef.current.cancel();
       animRef.current = null;
     }
-    resetPosition();
     await stopEngine(carId);
+    resetPosition();
     dispatch(setCarStatus({ id: carId, status: 'idle' }));
   }, [carId, dispatch, resetPosition]);
 
