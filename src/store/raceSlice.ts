@@ -117,6 +117,8 @@ export const raceAllCars = createAsyncThunk(
           dispatch(setCarStatus({ id: car.id, status: 'finished', progress: 1 }));
           const time = Math.round(duration / 10) / 100;
           dispatch(setWinner({ id: car.id, name: car.name, time }));
+          const saved = (getState() as { race: RaceState }).race.winner?.id === car.id;
+          if (saved) void dispatch(saveWinner({ id: car.id, time }));
         } catch (err) {
           if (!isStillRacing()) return;
           if (err instanceof ApiError && err.status === 500) {

@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchCars, addCar, setCurrentPage, clearEdit, deleteAllCars } from '../store/garageSlice';
-import { resetRace, raceAllCars, saveWinner, stopAllEngines, RaceWinner } from '../store/raceSlice';
+import { resetRace, raceAllCars, stopAllEngines } from '../store/raceSlice';
 import generateRandomCar from '../utils/randomCar';
 import { CARS_PER_PAGE, RANDOM_CARS_COUNT } from '../utils/constants';
 import CarForm from '../components/garage/CarForm';
@@ -20,22 +20,11 @@ function GaragePage() {
   const runningCarIds = useAppSelector((s) =>
     Object.keys(s.race.cars).map(Number).filter((id) => s.race.cars[id].status !== 'idle'),
   );
-  const winner = useAppSelector((s) => s.race.winner);
-
   useEffect(() => {
     if (loadedPage !== currentPage) {
       dispatch(fetchCars(currentPage));
     }
   }, [dispatch, currentPage, loadedPage]);
-
-  // Save the race winner to the winners API exactly once per race
-  const prevWinnerRef = useRef<RaceWinner | null>(null);
-  useEffect(() => {
-    if (winner !== null && prevWinnerRef.current === null && isRacing) {
-      dispatch(saveWinner({ id: winner.id, time: winner.time }));
-    }
-    prevWinnerRef.current = winner;
-  }, [winner, isRacing, dispatch]);
 
   const handlePageChange = (page: number) => {
     dispatch(setCurrentPage(page));
